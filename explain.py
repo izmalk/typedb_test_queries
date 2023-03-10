@@ -16,13 +16,27 @@ with TypeDB.core_client("0.0.0.0:1729") as client:  # Connect to TypeDB server
                                 "$o isa object, has path $fp; $pa($o, $va) isa access; " \
                                 "$va isa action, has action-name 'view_file'; get $fp; sort $fp asc;"
             iterator = transaction.query().match(typeql_read_query)
+            i = 0
             for item in iterator:  # Iterating through results
+                i += 1
+                print("\nNew item:")
                 explainable_relations = item.explainables().relations()
+                e = 0
                 for explainable in explainable_relations:
+                    e += 1
+                    print("New explainable:")
                     explain_iterator = transaction.query().explain(explainable_relations[explainable])
+                    ex = 0
                     for explanation in explain_iterator:
-                        print("Rule: ", explanation.rule().get_label())
+                        ex += 1
+                        print("New explanation:")
+                        print("\nRead result #:", i)
+                        print("Explainable #:", e)
+                        print("Explanation #:", ex)
+
+                        print("\nRule: ", explanation.rule().get_label())
                         print("Condition: ", explanation.condition())
                         print("Conclusion: ", explanation.conclusion())
                         print("Variables: ", explanation.variable_mapping())
+                        print("----------------------------------------------------------")
 
