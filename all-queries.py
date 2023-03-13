@@ -166,8 +166,11 @@ with TypeDB.core_client("0.0.0.0:1729") as client:  # Connect to TypeDB server
                     ex = 0
                     for explanation in explain_iterator:
                         ex += 1
+
                         print("\nRead result #:", i, ", File path:", item.get("fp").as_attribute().get_value())
-                        print("Explainable #:", e, ", Explained variable:", explainable)  # explainable_id()) conjunction())
+                        print("Explainable #:", e, ", Explained variable:", explainable)
+                        print("Explainable object:", explainable_relations[explainable])
+                        print("Explainable part of query:", explainable_relations[explainable].conjunction())
                         print("Explanation #:", ex)
 
                         print("\nRule: ", explanation.rule().get_label())
