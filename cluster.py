@@ -150,9 +150,11 @@ with TypeDB.cluster_client("127.0.0.1:1729", credentials) as client:  # Connect 
 
     with client.session("iam", SessionType.DATA) as session:  # Access data in the `iam` database as session
         print("\nRequest #10: Explain query — Files that Kevin Morrison has view access to (with explanation)")
-        typedb_options = TypeDBOptions.core()  # Initialising a new set of options
+        typedb_options = TypeDBClusterOptions.cluster()  # Initialising a new set of options
         typedb_options.infer = True  # Enabling inference in this new set of options
         typedb_options.explain = True
+        typedb_options.read_any_replica = True
+
         with session.transaction(TransactionType.READ, typedb_options) as transaction:  # Open transaction to read with inference
             typeql_read_query = "match $u isa user, has full-name 'Kevin Morrison'; $pe ($u, $pa) isa permission; " \
                                 "$o isa object, has path $fp; $pa($o, $va) isa access; " \
