@@ -32,14 +32,19 @@ with TypeDB.core_client("0.0.0.0:1729") as client:  # Connect to TypeDB server
             tql_data_insert += " has name '" + str(counter) + "',"
             timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
             tql_data_insert += " has join-date " + timestamp + ";"
+            tql_data_insert += " $r(friend:$p) isa friendship;"
             transaction.query().insert(tql_data_insert)
             transaction.commit()
             print("Initial data inserted:", timestamp)
 
         try:
             with session.transaction(TransactionType.WRITE) as transaction:
-                while True:
+                while counter < 17:
                     counter += 1
+                    tql_data_match = "match $t isa thing; get $t; count;"
+                    survey = transaction.query().match_aggregate(tql_data_match)
+                    timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+                    print(timestamp, "Counting the number of instances in the DB:", survey.get().as_int())
                     tql_data_match_insert = "match"
                     tql_data_match_insert += " $p isa person;"
                     tql_data_match_insert += " $or isa friendship;"
@@ -48,12 +53,13 @@ with TypeDB.core_client("0.0.0.0:1729") as client:  # Connect to TypeDB server
                     tql_data_match_insert += " has name '" + str(counter) + "',"
                     timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
                     tql_data_match_insert += " has join-date " + timestamp + ";"
+                    tql_data_match_insert += "$or(friend:$p, friend:$np) isa friendship;"
                     tql_data_match_insert += "$r(friend:$p, friend:$np) isa friendship;"
                     print("timestamp:", timestamp, "Sending query#", counter)
                     response = transaction.query().insert(tql_data_match_insert)
-                    for item in response:
-                        print(item.map().items())
-
+                    # for r in response:
+                    #     for item in r.concepts():
+                    #         print(item.to_json())
 
                 transaction.commit()
         except Exception as e:
