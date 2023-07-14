@@ -11,7 +11,7 @@ with TypeDB.core_client("0.0.0.0:1729") as client:  # Connect to TypeDB server
         with session.transaction(TransactionType.READ) as transaction:  # Open transaction to read
             typeql_read_query = "match $u isa user, has full-name $n;"
             response = transaction.query().match(typeql_read_query)  # Executing query
-            print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
+            # print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
             k = 0
             for item in response:  # Iterating through response
                 k += 1  # Counter
