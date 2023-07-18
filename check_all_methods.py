@@ -13,11 +13,11 @@ from typedb.client import TypeDB, TypeDBOptions
 
 def print_methods(obj, nesting_level=0):
     for method_name in dir(obj):
-        if not method_name.startswith('_'):
+        if not False or (method_name.startswith('_') or method_name == 'stub'):
             method = getattr(obj, method_name)
             if callable(method):
                 indent = nesting_level * "-"
-                print(f"{indent}{method_name}")
+                print(f"{indent} {method_name}")
                 print_methods(method, nesting_level + 1)
 
 
