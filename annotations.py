@@ -18,7 +18,7 @@ with TypeDB.core_client("localhost:1729") as client:  # Connect to TypeDB server
                 user_key_attribute_types = item.get("u").as_entity().get_type().as_thing_type().as_remote(transaction).\
                     get_owns(annotations={Annotations.KEY})
                 for key in user_key_attribute_types:  # Default schema has no results
-                    print(key.get_label())
+                    print("Found a key attribute type, that can be potentially owned by the User type:", key.get_label())
             print("Users found:", k)  # Print number of results
 
 print("Closing app")
