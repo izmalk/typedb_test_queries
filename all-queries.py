@@ -4,7 +4,7 @@ from datetime import datetime
 print("IAM Test all types of queries and their response")
 
 print("Connecting to the server")
-with TypeDB.core_driver("0.0.0.0:1729") as client:  # Connect to TypeDB server
+with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
     print("Connecting to the `iam` database")
     with client.session("iam", SessionType.DATA) as session:  # Access data in the `iam` database as session
         print("\nRequest #1: Get query — User listing")
