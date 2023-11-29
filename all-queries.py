@@ -12,9 +12,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
             typeql_read_query = "match $u isa user, has full-name $n; get $u, $n;"
             response = transaction.query.get(typeql_read_query)
             # response = transaction.query.get(typeql_read_query)  # Executing query
-            # print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
+            print(">>>> TypeDB responded with iterator:", type(response), '<<<<')  # Stream of ConceptMap
             k = 0
             for item in response:  # Iterating through response
+                print(">>>> Iterator contains:", type(item), '<<<<')
                 k += 1  # Counter
                 print("User #" + str(k) + ": " + item.get("n").as_attribute().get_value())
             print("Users found:", k)  # Print number of results
@@ -23,8 +24,9 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
         with session.transaction(TransactionType.READ) as transaction:  # Open transaction to read
             typeql_read_query = "match $u isa user, has full-name $n; get $u, $n; count;"
             response = transaction.query.get_aggregate(typeql_read_query)  # Executing query
-            print(">TypeDB responded with", type(response), '<')  # QueryFuture of Numeric
+            print(">>>> TypeDB responded with", type(response), '<')  # QueryFuture of Numeric
             result = response.resolve().get()
+            print(">>>> Promise contains:", type(result), '<<<<')
             print("Number of users in database:", result)
 
         print("\nRequest #3: Get with grouping query — Files per person listing (grouped)")
@@ -33,13 +35,15 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
                                 "$y (object: $o, action: $act) isa access; $act has name $act-n; " \
                                 "$o has path $o-fp; get $x-n, $o-fp; group $x-n;"
             response = transaction.query.get_group(typeql_read_query)  # Executing query
-            print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMapGroup
+            print(">>>> TypeDB responded with", type(response), '<')  # Stream of ConceptMapGroup
             g = 0
             for conceptMapGroup in response:
+                print(">>>> Iterator contains:", type(conceptMapGroup), '<<<<')
                 g += 1
                 print("Group#", g, ",", conceptMapGroup.owner().as_attribute().get_value())
                 k = 0
                 for item in conceptMapGroup.concept_maps():  # Iterating through response
+                    print(">>>> Iterator contains:", type(item), '<<<<')
                     k += 1  # Counter
                     print("File #" + str(k) + ": " + item.get("o-fp").as_attribute().get_value())
                 print("Files found in this group:", k)  # Print number of results
@@ -51,9 +55,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
                                 "$y (object: $o, action: $act) isa access; $act has name $act-n; " \
                                 "$o has path $o-fp; get $x-n, $o-fp; group $x-n; count;"
             response = transaction.query.get_group_aggregate(typeql_read_query)  # Executing query
-            print(">TypeDB responded with", type(response), '<')  # Stream of NumericGroup
+            print(">>>> TypeDB responded with", type(response), '<')  # Stream of NumericGroup
             g = 0
             for numericGroup in response:
+                print(">>>> Iterator contains:", type(numericGroup), '<<<<')
                 g += 1
                 print("Group#", g, ", owner: ", numericGroup.owner().as_attribute().get_value())  # Print group #, owner
                 print("Files found in this group:", numericGroup.value().as_long())  # Print count for the group
@@ -65,9 +70,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
             typeql_insert_query = "insert $f isa file, has path '" + filepath + "';"
             print("Inserting file:", filepath)
             response = transaction.query.insert(typeql_insert_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
+            print(">>>> TypeDB responded with", type(response), '<')  # Stream of ConceptMap
             k = 0
             for item in response:
+                print(">>>> Iterator contains:", type(item), '<<<<')
                 k += 1
                 print("Inserted file #" + str(k) + ":")
                 print("Returned concepts: ", item.concepts())
@@ -80,9 +86,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
                                                                                "insert ($vav, $f) isa access;"
             print("Adding view access to the file")
             response = transaction.query.insert(typeql_insert_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
+            print(">>>> TypeDB responded with", type(response), '<')  # Stream of ConceptMap
             k = 0
             for item in response:
+                print(">>>> Iterator contains:", type(item), '<<<<')
                 k += 1
                 print("Inserted access relation #" + str(k) + ":")
                 print("Returned concepts: ", item.concepts())
@@ -98,15 +105,17 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
                                                                                "delete $ac isa access;"
             print("Deleting view access to the file", filepath)
             response = transaction.query.delete(typeql_delete_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # QueryFuture
+            print(">>>> TypeDB responded with", type(response), '<')  # QueryFuture
             result = response.resolve()
+            print(">>>> Promise contains:", type(result), '<<<<')
             print("Result:", result)
 
             typeql_delete_query = "match $f isa file, has path '" + filepath + "'; delete $f isa file;"
             print("Deleting file:", filepath)
             response = transaction.query.delete(typeql_delete_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # QueryFuture
+            print(">>>> TypeDB responded with", type(response), '<')  # QueryFuture
             result = response.resolve()
+            print(">>>> Promise contains:", type(result), '<<<<')
             print("Result:", result)
             transaction.commit()  # commits the transaction
 
@@ -117,9 +126,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
                                   "insert $p has email 'masako.holley@vaticle.com';"
             print("Deleting view access to the file", filepath)
             response = transaction.query.update(typeql_update_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # Stream of ConceptMap
+            print(">>>> TypeDB responded with", type(response), '<')  # Stream of ConceptMap
             k = 0
             for item in response:
+                print(">>>> Iterator contains:", type(item), '<<<<')
                 k += 1
                 print("Inserted email #" + str(k) + ":")
                 print("Returned concepts: ", item)
@@ -132,8 +142,9 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
         with session.transaction(TransactionType.WRITE) as transaction:  # Open transaction to write
             typeql_define_query = "define test sub entity, owns name;"
             response = transaction.query.define(typeql_define_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # QueryFuture
+            print(">>>> TypeDB responded with", type(response), '<')  # QueryFuture
             result = response.resolve()
+            print(">>>> Promise contains:", type(result), '<<<<')
             print("Result:", result)
             transaction.commit()  # commits the transaction
 
@@ -141,8 +152,9 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
         with session.transaction(TransactionType.WRITE) as transaction:  # Open transaction to write
             typeql_undefine_query = "undefine test sub entity;"
             response = transaction.query.undefine(typeql_undefine_query)  # runs the query
-            print(">TypeDB responded with", type(response), '<')  # QueryFuture
+            print(">>>> TypeDB responded with", type(response), '<')  # QueryFuture
             result = response.resolve()
+            print(">>>> Promise contains:", type(result), '<<<<')
             print("Result:", result)
             transaction.commit()  # commits the transaction
 
@@ -159,8 +171,10 @@ with TypeDB.core_driver("localhost:1729") as client:  # Connect to TypeDB server
             iterator = transaction.query.get(typeql_read_query)
             i = 0
             for item in iterator:  # Iterating through results
+                print(">>>> Iterator contains:", type(item), '<<<<')
                 i += 1
                 explainable_relations = item.explainables().relations()
+                print(">>>> TypeDB responded (explanation) with", type(explainable_relations), '<')
                 e = 0
                 for explainable in explainable_relations:
                     e += 1
