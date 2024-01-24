@@ -35,4 +35,3 @@ with TypeDB.core_driver("127.0.0.1:1729") as client:  # Connect to TypeDB server
                         for var in explanation.query_variables():
                             print(f"  Query variable {var} maps to the rule variable {explanation.query_variable_mapping(var)}")
                         print("----------------------------------------------------------")
-                        
