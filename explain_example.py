@@ -3,8 +3,7 @@ from typedb.driver import TypeDB, SessionType, TransactionType, TypeDBOptions
 with TypeDB.core_driver("127.0.0.1:1729") as client:  # Connect to TypeDB server
     with client.session("iam", SessionType.DATA) as session:
         print("\nRequest #1: Explain query — Files that Kevin Morrison has view access to (with explanation)")
-        typedb_options = TypeDBOptions(infer=True, explain=True)  # Initialising a new set of options
-        with session.transaction(TransactionType.READ, typedb_options) as transaction:
+        with session.transaction(TransactionType.READ, TypeDBOptions(infer=True, explain=True)) as transaction:
             typeql_read_query = "match $p isa person, has full-name $p-fname; $o isa object, has path $o-path;" \
                                 "$a isa action, has name 'view_file'; $ac(object: $o, action: $a) isa access;" \
                                 "$pe(subject: $p, access: $ac) isa permission; $p-fname = 'Kevin Morrison';" \
@@ -36,3 +35,4 @@ with TypeDB.core_driver("127.0.0.1:1729") as client:  # Connect to TypeDB server
                         for var in explanation.query_variables():
                             print(f"  Query variable {var} maps to the rule variable {explanation.query_variable_mapping(var)}")
                         print("----------------------------------------------------------")
+                        
